@@ -12,41 +12,21 @@ import com.mysql.jdbc.Driver;
 
 public class ConnectionDb {
 
-   // private Connection connection;
- 
-    
     private Properties prorerties = new Properties();
     private Connection msqlConnect;
- public ConnectionDb (){ 	
-    } 
- 
-    
-    public void init() {
+    public void Conect() {
     	 if (msqlConnect == null) {
     	 try {
-    		 Class.forName ("com.mysql.jdbc.Driver");
-
- 			msqlConnect = DriverManager.getConnection("jdbc:mysql://localhost:3306/abonent?autoReccnect=true&useSSL=false", "root","root");
- 		
-        	} catch (SQLException e) {
+    	       Class.forName ("com.mysql.jdbc.Driver");
+ 		   	   msqlConnect = DriverManager.getConnection("jdbc:mysql://localhost:3306/abonent?autoReccnect=true&useSSL=false", "root","root");
+ 		    } catch (SQLException e) {
 			   e.printStackTrace();
 		    } catch (ClassNotFoundException e) {
  		       e.printStackTrace();
-         
 		    }
-    	  
-    	 
+ 
     }
      }
-    
-     public void finalize() {
-    	 try {
-			msqlConnect.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} 
-     }
-     
      public ResultSet resultSetQuery(String query) {
     	 ResultSet result = null;
     	 Statement stnt;
@@ -56,21 +36,15 @@ public class ConnectionDb {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return result;
-    	 
+		return result; 
      }
      public void  updateQuery(String query) {
     	 
 		try {
-
 			Statement stnt = msqlConnect.createStatement();
 			stnt.executeUpdate(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-		
-    	 
+		} 
      }
-	
 }
-

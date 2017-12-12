@@ -1,23 +1,27 @@
 package net.codejava.model.Employee;
 
 
+import java.awt.event.ActionEvent;
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 
 
-public class EmployeeTableModel implements TableModel{
+public class EmployeeTableModel extends AbstractTableModel{
 	
-  private Set<TableModelListener> listeners = new HashSet<TableModelListener>();
-   private List<Employee> employeeList = new ArrayList<Employee>();;
+   private List<Employee> employeeList ;
    private  ConnectionDb connect ;  
    private final String[] columnNames = new String[] {
            "id", "firstname", "lastname", "phone", "groupphone"
@@ -26,11 +30,9 @@ public class EmployeeTableModel implements TableModel{
        Integer.class, String.class, String.class,Integer.class,String.class
    };
  
-   public void addTableModelListener(TableModelListener listener) {
-       listeners.add(listener);
-   }
-   public EmployeeTableModel(ConnectionDb connect)
+ EmployeeTableModel(ConnectionDb connect,List<Employee> employeeList)
    {this.connect = connect;
+     this.employeeList = employeeList;
 	  
    }
     
@@ -90,22 +92,16 @@ public class EmployeeTableModel implements TableModel{
        return true;
    }
 
- 
-   public void setValueAt(Object aValue, int rowIndex, int columnIndex)
+  public void setValueAtt(Employee newData){
+	  employeeList.add(newData);
+      fireTableDataChanged();
+  }
+public void setValueAt(Object aValue, int rowIndex, int columnIndex)
    {
        Employee row = employeeList.get(rowIndex);
-       /*if(0 == columnIndex) {
-           row.setId((Integer) aValue);
-           
-       }
-       else */if(1 == columnIndex) {
-           row.setFirstname((String) aValue);
-      
-   
+       if(1 == columnIndex) {
+          row.setFirstname((String) aValue);
           connect.updateQuery("UPDATE abonentu SET firstname  = '"+ aValue +"' where id = '"+ row.getId()+"';" );
-          
-         
-          
        }
        else if(2 == columnIndex) {
            row.setLastname((String) aValue);
@@ -119,29 +115,31 @@ public class EmployeeTableModel implements TableModel{
            row.setGroupphone((String) aValue);
            connect.updateQuery("UPDATE abonentu SET groupphone  = '"+ aValue +"' where id = '"+ row.getId()+"';" );
        }
-       
-      
    }
    
-   public void addData(ConnectionDb  connect) {
+   public void Print(ConnectionDb  connect) {
 		ResultSet result =  connect.resultSetQuery("Select * from abonentu;");
 		employeeList.clear();
 		try {
 			while(result.next()) {
-				
-				
-				
 				Employee row1 = new Employee(result.getInt("id"), result.getString("firstname"), result.getString("lastname"),result.getInt("phone"),result.getString("groupphone"));
-				employeeList.add(row1);	
-			
+				employeeList.add(row1);
 			}
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		fireTableDataChanged();
    }
-		
-   public void addPrint(ConnectionDb  connect,String str,int s) {
+   public void PrinF() {
+	   Collections.sort(employeeList, Employee.COMPARE_BY_Firstname);
+	   fireTableDataChanged();
+  }
+   public void PrinL() {
+	   Collections.sort(employeeList, Employee.COMPARE_BY_Lastname);
+	   fireTableDataChanged();
+  }
+   public void Search(ConnectionDb  connect,String str,int s) {
 		ResultSet result =  connect.resultSetQuery("Select * from abonentu;");
 		employeeList.clear();
 		try {
@@ -160,42 +158,24 @@ public class EmployeeTableModel implements TableModel{
 					employeeList.add(row1);	
 					}
 			}
-			//result.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
 	}
   
-   public void addDataa(ConnectionDb  connect, String i, String f, int n, String g ) {
+   public void addData(ConnectionDb  connect, String i, String f, int n, String g ) {
 		
 		 connect.updateQuery("INSERT INTO abonentu(firstname , lastname, phone,groupphone) VALUES('"+ i +"', '"+ f +"', '"+ n +"', '"+ g +"'  );");
-		
+		 fireTableDataChanged();
+		 
 		}
 
    public void Delet(ConnectionDb  connect, int n ) {
 		
 		 connect.updateQuery("delete  from abonentu where id ='"+ n +"'; ");
-		
+		 fireTableDataChanged();
 		}
-   
-
-@Override
-public void removeTableModelListener(TableModelListener listener) {
-	listeners.add(listener);
-	
-} 
-
-		
-		
-	
-	
-	
-	
-
-
-
-
 
 
 }

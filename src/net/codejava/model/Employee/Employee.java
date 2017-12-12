@@ -1,6 +1,8 @@
 package net.codejava.model.Employee;
 
-public class Employee
+import java.util.Comparator;
+
+public class Employee 
 {
     private int id;
     private String firstname;
@@ -64,7 +66,28 @@ public class Employee
     {
         this.groupphone = groupphone;
     }
- 
+   
+    public static final Comparator<Employee> COMPARE_BY_Firstname = new Comparator<Employee>() {
+   
+    	public int compare(Employee p1, Employee p2)
+        {
+           
+           if(p1.getFirstname().equals(p2.getFirstname()))
+           {
+               return p1. getLastname().compareTo(p2. getLastname());
+           }
+           return p1.getFirstname().compareTo(p2.getFirstname());
+        }
+    };
+    public static final Comparator<Employee> COMPARE_BY_Lastname = new Comparator<Employee>() {
+    	   
+    	public int compare(Employee p1, Employee p2)
+        {
+           
+           return p1.getLastname().compareTo(p2.getLastname());
+        }
+    };
+    
    
  
 }
